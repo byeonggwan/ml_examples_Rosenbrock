@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import time
 
 def f(x):
     x1 = x[0]
@@ -46,11 +47,11 @@ gradient = gradient_f(x)
 ft_o = ft
 gradient_o = gradient
 
-# Factors
-alpha = 0.99
-tau = 0.7
-c = 0.7
-T = 0.000000001
+# Factors. You may change this part.
+c = 0.5
+alpha = 0.5
+tau = 0.5
+T = 0.0000000001
 
 # For matplotlib
 plotx = []
@@ -60,6 +61,8 @@ plotx2 = []
 
 i = 0 # iterator
 
+print("Timer start.")
+start = time.time()
 while definite_pt(gradient)/definite_pt(gradient_o) > T: # origin : ||gradient f(x)|| / ||gradient f(x0)|| < T for contant T
     plotx.append(i)
     ploty.append(f(x))
@@ -69,15 +72,18 @@ while definite_pt(gradient)/definite_pt(gradient_o) > T: # origin : ||gradient f
     gradient = gradient_f(x)
     H = H_f(x)
     H_inverse = inverse(H)
-    print ( "iter: " + str(i) + "    x1: " + str(round(x[0],4)) + "    x2: " + str(round(x[1],4)))
+    #print ( "iter: " + str(i) + "    x1: " + str(round(x[0],4)) + "    x2: " + str(round(x[1],4)))
     
+    alpha = bls(x, alpha, tau, c, [-gradient_f(x)[0], -gradient_f(x)[1]])
     x[0] = x[0] - alpha*multiple_2x2_2x1(H_inverse, gradient)[0]
     x[1] = x[1] - alpha*multiple_2x2_2x1(H_inverse, gradient)[1]
-    alpha = bls(x, alpha, tau, c, [-gradient_f(x)[0], -gradient_f(x)[1]])
+    
     
     i += 1
 
-plt.plot(plotx, ploty)
+print("Timer end. Each iteration time is : ", (time.time() - start)/i)
+
+plt.plot(plotx[:50], ploty[:50])
 plt.savefig('nm.png')
 plt.clf()
 plt.scatter(plotx1, plotx2)
